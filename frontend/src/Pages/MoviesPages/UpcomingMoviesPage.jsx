@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const CurrentMoviesPage = () => {
+const UpcomingMoviesPage = () => {
   const navigate = useNavigate();
   const movies = [
-    { id: 1, imagePath: '/src/assets/movie1.jpg', title: '' },
-    { id: 2, imagePath: '/src/assets/movie2.jpg', title: '' },
-    { id: 3, imagePath: '/src/assets/movie3.jpg', title: '' },
-    { id: 4, imagePath: '/src/assets/movie4.jpg', title: '' },
-    { id: 5, imagePath: '/src/assets/movie5.jpg', title: '' },
+    { id: 1, imagePath: '/src/assets/movie6.jpg', title: '' },
+    { id: 2, imagePath: '/src/assets/movie7.jpg', title: '' },
+    { id: 3, imagePath: '/src/assets/movie8.jpg', title: '' },
+    { id: 4, imagePath: '/src/assets/movie9.jpg', title: '' },
+    { id: 5, imagePath: '/src/assets/movie10.jpg', title: '' },
   ];
 
   // Function to handle booking button click without propagating to parent card
@@ -40,7 +40,7 @@ const CurrentMoviesPage = () => {
       {/* Main Content */}
       <main className="container mx-auto py-8 px-4 md:px-8">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold">Now Playing</h2>
+          <h2 className="text-3xl font-bold">Upcoming Movies</h2>
           <div className="relative">
             <input
               type="text"
@@ -62,25 +62,14 @@ const CurrentMoviesPage = () => {
               key={movie.id}
               className="group bg-gray-800 rounded-lg overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-purple-900/20"
             >
-              {/* Entire card is clickable and navigates to movie details */}
-              <Link to={`/currentMovieDetails/${movie.id}`}>
+              {/* click to go to movie details,using static id fr now*/}
+              <Link to={`/upcomingMovieDetails/${movie.id}`}>
                 <div className="relative">
                   <img 
                     src={movie.imagePath} 
                     alt="Movie poster" 
                     className="w-full h-80 object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
-                    <div className="p-4 w-full">
-                      {/* Book Now button with dedicated click handler */}
-                      <button 
-                        className="w-full py-2 bg-purple-600 hover:bg-purple-700 rounded text-white font-medium transition-colors"
-                        onClick={(e) => handleBookNowClick(e, movie.id)}
-                      >
-                        Book Now
-                      </button>
-                    </div>
-                  </div>
                 </div>
                 <div className="p-4">
                   <h3 className="text-lg font-medium text-center h-8">
@@ -106,4 +95,4 @@ const CurrentMoviesPage = () => {
   );
 };
 
-export default CurrentMoviesPage;
+export default UpcomingMoviesPage;

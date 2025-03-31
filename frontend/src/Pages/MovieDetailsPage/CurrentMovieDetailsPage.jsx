@@ -1,10 +1,9 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const MovieDetailsPage = () => {
+const CurrentMovieDetailsPage = () => {
   const navigate = useNavigate();
-  
-  // Mock data for Shawshank Redemption
+  //for now just using shawshank
   const movie = {
     id: 1,
     title: "The Shawshank Redemption",
@@ -14,8 +13,8 @@ const MovieDetailsPage = () => {
     genre: "Drama",
     director: "Frank Darabont",
     cast: "Tim Robbins, Morgan Freeman, Bob Gunton",
-    synopsis: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-    imagePath: "/src/assets/movie1.jpg" // Make sure this matches your actual path
+    synopsis: "A banker convicted of uxoricide forms a friendship over a quarter century with a hardened convict, while maintaining his innocence and trying to remain hopeful through simple compassion.",
+    imagePath: "/src/assets/movie1.jpg" 
   };
 
   // Handle booking button click
@@ -124,7 +123,7 @@ const MovieDetailsPage = () => {
                     {[...Array(5)].map((_, i) => (
                       <svg 
                         key={i}
-                        className={`w-5 h-5 ${i < 4 ? 'text-yellow-400' : 'text-gray-600'}`}
+                        className={`w-5 h-5 ${i < 5 ? 'text-yellow-400' : 'text-gray-600'}`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -158,4 +157,4 @@ const MovieDetailsPage = () => {
   );
 };
 
-export default MovieDetailsPage;
+export default CurrentMovieDetailsPage;

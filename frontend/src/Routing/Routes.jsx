@@ -5,8 +5,10 @@ import LoginPage from "../Pages/LoginPage/LoginPage";
 import RegistrationPage from "../Pages/RegistrationPage/RegistrationPage";
 import HomePage from "../Pages/HomePage/HomePage";
 import CurrentMoviesPage from "../Pages/MoviesPages/CurrentMoviesPage";
-import MovieDetailsPage from "../Pages/MovieDetailsPage/MovieDetailPage";
-
+import CurrentMovieDetailsPage from "../Pages/MovieDetailsPage/CurrentMovieDetailsPage";
+import UpcomingMoviesPage from "../Pages/MoviesPages/UpcomingMoviesPage";
+import UpcomingMovieDetailsPage from "../Pages/MovieDetailsPage/UpcomingMovieDetailsPage";
+import SearchPage from "../Pages/SearchPage/SearchPage";
 
 export const router = createBrowserRouter([
     {
@@ -34,8 +36,20 @@ export const router = createBrowserRouter([
                 element: <CurrentMoviesPage/>
             },
             {
-                path:"/movieDetails/:id",
-                element: <MovieDetailsPage/>
+                path:"/currentMovieDetails/:id",
+                element: <CurrentMovieDetailsPage/>
+            },
+            {
+                path: "/browseUpcoming",
+                element: <UpcomingMoviesPage/>
+            },
+            {
+                path:"/upcomingMovieDetails/:id",
+                element: <UpcomingMovieDetailsPage/>
+            },
+            {
+                path:"/search",
+                element: <SearchPage/>
             }
         
         ]
