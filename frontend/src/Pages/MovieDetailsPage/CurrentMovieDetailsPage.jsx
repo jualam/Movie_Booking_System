@@ -117,7 +117,7 @@ const CurrentMovieDetailsPage = () => {
                     <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center mr-3">
                       <span className="text-sm font-medium">JD</span>
                     </div>
-                    <h4 className="font-medium">John Doe</h4>
+                    <h4 className="font-medium">Juhair Alam</h4>
                   </div>
                   <div className="flex items-center mb-2">
                     {[...Array(5)].map((_, i) => (

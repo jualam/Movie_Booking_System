@@ -9,7 +9,9 @@ import CurrentMovieDetailsPage from "../Pages/MovieDetailsPage/CurrentMovieDetai
 import UpcomingMoviesPage from "../Pages/MoviesPages/UpcomingMoviesPage";
 import UpcomingMovieDetailsPage from "../Pages/MovieDetailsPage/UpcomingMovieDetailsPage";
 import SearchPage from "../Pages/SearchPage/SearchPage";
-
+import ProfilePage from "../Pages/ProfilePage/ProfilePage";
+import TicketBookingPage from "../Pages/TicketBookingPage/TicketBookingPage";
+import PaymentPage from "../Pages/PaymentPage/PaymentPage";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -50,8 +52,19 @@ export const router = createBrowserRouter([
             {
                 path:"/search",
                 element: <SearchPage/>
+            },
+            {
+                path:"/profile",
+                element:<ProfilePage/>
+            },
+            {
+                path:"/ticketBooking/:id",
+                element:<TicketBookingPage/>
+            },
+            {
+                path: "/payment",
+                element: <PaymentPage />
             }
-        
         ]
 
     }

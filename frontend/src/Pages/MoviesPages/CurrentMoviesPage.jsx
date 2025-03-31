@@ -11,10 +11,10 @@ const CurrentMoviesPage = () => {
     { id: 5, imagePath: '/src/assets/movie5.jpg', title: '' },
   ];
 
-  // Function to handle booking button click without propagating to parent card
+  // Function to handle booking button click 
   const handleBookNowClick = (e, movieId) => {
     e.preventDefault(); // Prevent navigating to movie details
-    e.stopPropagation(); // Stop event bubbling
+    e.stopPropagation(); 
     navigate(`/ticketBooking/${movieId}`);
   };
 
