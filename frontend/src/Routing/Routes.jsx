@@ -12,6 +12,9 @@ import SearchPage from "../Pages/SearchPage/SearchPage";
 import ProfilePage from "../Pages/ProfilePage/ProfilePage";
 import TicketBookingPage from "../Pages/TicketBookingPage/TicketBookingPage";
 import PaymentPage from "../Pages/PaymentPage/PaymentPage";
+import OrderHistoryPage from "../Pages/OrderHistoryPage/OrderHistoryPage";
+import ViewTicketPage from  "../Pages/ViewTicketPage/ViewTicketPage";
+
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -64,6 +67,14 @@ export const router = createBrowserRouter([
             {
                 path: "/payment",
                 element: <PaymentPage />
+            },
+            {
+                path:"/orderHistory",
+                element:<OrderHistoryPage/>
+            },
+            {
+                path:"/viewTicket/:id",
+                element:<ViewTicketPage/>
             }
         ]
 

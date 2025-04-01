@@ -14,7 +14,7 @@ const PaymentPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Processing payment with:', paymentMethod, cardDetails);
-    navigate('/orderHistory');
+    navigate("/viewTicket/:id");
   };
 
   return (
