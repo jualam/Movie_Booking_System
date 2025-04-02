@@ -85,7 +85,7 @@ const TicketBookingPage = () => {
             />
           </div>
 
-          {/* Price Summary,set 134 as example */}
+          {/* Price */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex justify-between mb-2">
               <span className="text-gray-600">Tickets ({formData.tickets} x $12.99)</span>

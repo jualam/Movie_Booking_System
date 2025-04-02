@@ -1,11 +1,11 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-import barcodeImage from "../../assets/barcode.jpg"; // Your barcode image
+import barcodeImage from "../../assets/barcode.jpg"; // using barcde image for now
 
 const ViewTicketPage = () => {
   const { id } = useParams();
   
-  // Static ticket data (replace with your actual data)
+  // Static ticket data 
   const ticketData = {
     movie: "The Shawshank Redemption",
     theater: "Amarillo",
@@ -92,7 +92,7 @@ const ViewTicketPage = () => {
             </div>
           </div>
 
-          {/* Help Info */}
+          {/* extra info */}
           <div className="mt-6 text-center text-sm text-gray-500">
             <p>Present this ticket at the theater entrance</p>
             <p className="mt-1">Valid for {ticketData.seats} person(s)</p>

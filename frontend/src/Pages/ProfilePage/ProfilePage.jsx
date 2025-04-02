@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const ProfilePage = () => {
-  // Mock user data (would come from your registration in a real app)
+  // Trial user data
   const userData = {
     firstName: "Juhair",
     lastName: "Alam",
