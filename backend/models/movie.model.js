@@ -18,6 +18,7 @@ const movieSchema = new mongoose.Schema(
       enum: [
         "Action",
         "Comedy",
+        "Adventure",
         "Drama",
         "Horror",
         "Sci-Fi",
@@ -51,10 +52,10 @@ const movieSchema = new mongoose.Schema(
       type: String,
       required: [true, "Poster URL is required"],
     },
-    trailerUrl: {
-      type: String,
-      required: [true, "Trailer URL is required"],
-    },
+    // trailerUrl: {
+    //   type: String,
+    //   required: [true, "Trailer URL is required"],
+    // },
     rating: {
       type: Number,
       min: 0,

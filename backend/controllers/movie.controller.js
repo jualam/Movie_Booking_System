@@ -1,4 +1,5 @@
 import Movie from "../models/movie.model.js";
+import Ticket from "../models/ticket.model.js";
 
 // Add new movie (Admin only)
 export const addMovie = async (req, res, next) => {
@@ -119,6 +120,60 @@ export const getMovieDetails = async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: movie,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update existing movie
+export const updateMovie = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    const updatedMovie = await Movie.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedMovie) {
+      return res.status(404).json({
+        success: false,
+        message: "Movie not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Movie updated successfully",
+      data: updatedMovie,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete a movie
+export const deleteMovie = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const deletedMovie = await Movie.findByIdAndDelete(id);
+
+    if (!deletedMovie) {
+      return res.status(404).json({
+        success: false,
+        message: "Movie not found",
+      });
+    }
+
+    // Also delete any tickets associated with this movie
+    await Ticket.deleteMany({ movie: id });
+
+    res.status(200).json({
+      success: true,
+      message: "Movie deleted successfully",
     });
   } catch (error) {
     next(error);

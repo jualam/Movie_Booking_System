@@ -45,10 +45,6 @@ const ticketSchema = new mongoose.Schema(
       enum: ["Credit Card", "Venmo", "PayPal"],
       required: true,
     },
-    bookingDate: {
-      type: Date,
-      default: Date.now,
-    },
   },
   { timestamps: true }
 );

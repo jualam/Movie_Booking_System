@@ -6,6 +6,8 @@ import movieRoutes from "./routes/movie.routes.js";
 import User from "./models/user.model.js";
 import bcrypt from "bcryptjs";
 import bookingRoutes from "./routes/booking.routes.js";
+import reportRoutes from "./routes/report.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 import cors from "cors";
 
@@ -25,6 +27,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/movies", movieRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/reports", reportRoutes);
+app.use("/api/users", userRoutes);
 
 // Root route
 app.get("/", (req, res) => {

@@ -59,26 +59,28 @@ export const authenticate = async (req, res, next) => {
   }
 };
 
-export const optionalAuthenticate = async (req, res, next) => {
-  try {
-    const authHeader = req.headers.authorization;
+//curently not in use
 
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      const token = authHeader.split(" ")[1];
-      const decoded = jwt.verify(token, JWT_SECRET);
-      const user = await User.findById(decoded.userId).select("-password");
+// export const optionalAuthenticate = async (req, res, next) => {
+//   try {
+//     const authHeader = req.headers.authorization;
 
-      if (user) {
-        req.user = user;
-        req.userId = user._id;
-      }
-    }
-    next();
-  } catch (error) {
-    // We don't block the request for optional auth
-    next();
-  }
-};
+//     if (authHeader && authHeader.startsWith("Bearer ")) {
+//       const token = authHeader.split(" ")[1];
+//       const decoded = jwt.verify(token, JWT_SECRET);
+//       const user = await User.findById(decoded.userId).select("-password");
+
+//       if (user) {
+//         req.user = user;
+//         req.userId = user._id;
+//       }
+//     }
+//     next();
+//   } catch (error) {
+//     // We don't block the request for optional auth
+//     next();
+//   }
+// };
 
 // Admin middleware (builds on authenticate)
 export const requireAdmin = async (req, res, next) => {
