@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+
 const RegistrationPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -8,7 +9,7 @@ const RegistrationPage = () => {
     lastName: "",
     email: "",
     address: "",
-    phone: "",
+    phoneNumber: "",
     password: "",
     confirmPassword: "",
     termsAccepted: false,
@@ -22,9 +23,9 @@ const RegistrationPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.termsAccepted) {
       alert("You must accept the terms and conditions.");
       return;
@@ -34,9 +35,38 @@ const RegistrationPage = () => {
       alert("Passwords do not match!");
       return;
     }
-    console.log("Registration Successful", formData);
 
-    navigate("/login");
+    const payload = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      address: formData.address,
+      email: formData.email,
+      phoneNumber: formData.phoneNumber,
+      password: formData.password,
+      termsAccepted: formData.termsAccepted,
+    };
+
+    try {
+      const response = await fetch("http://localhost:5500/api/v1/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Registration successful!");
+        navigate("/login");
+      } else {
+        alert(data.message || "Registration failed.");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -46,7 +76,6 @@ const RegistrationPage = () => {
         <p className="text-gray-600 text-sm mt-2">Create your account</p>
       </div>
 
-      {/* Registration Form */}
       <form onSubmit={handleSubmit}>
         <div className="grid sm:grid-cols-2 gap-8">
           <div>
@@ -101,8 +130,8 @@ const RegistrationPage = () => {
             <label className="text-gray-800 text-sm font-medium mb-2 block">Phone Number</label>
             <input
               type="tel"
-              name="phone"
-              value={formData.phone}
+              name="phoneNumber"
+              value={formData.phoneNumber}
               onChange={handleChange}
               required
               className="bg-gray-100 w-full text-gray-800 text-sm px-4 py-3 rounded focus:bg-transparent focus:outline-blue-500 transition-all"
@@ -164,7 +193,7 @@ const RegistrationPage = () => {
       <p className="mt-6 text-center text-sm text-gray-600">
         Already have an account?{" "}
         <Link to="/login" className="text-blue-600 hover:text-blue-700">
-            Log in
+          Log in
         </Link>
       </p>
     </div>

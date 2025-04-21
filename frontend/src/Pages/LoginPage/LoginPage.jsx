@@ -11,26 +11,29 @@ export default function LoginPage() {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5500/api/v1/auth/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch("http://localhost:5500/api/v1/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Assuming your API returns a token in data.token
-        localStorage.setItem('token', data.token);
-        navigate("/homePage");
+        const { token, user } = data.data;
+        localStorage.setItem("token", token);
+
+        if (user.isAdmin) {
+          navigate("/adminHomePage");
+        } else {
+          navigate("/homePage");
+        }
       } else {
-        alert(data.message || 'Login Failed');
+        alert(data.message || "Login Failed");
       }
     } catch (error) {
-      console.error('Error during login:', error);
-      alert('Something went wrong. Please try again.');
+      console.error("Error during login:", error);
+      alert("Something went wrong. Please try again.");
     }
   };
 
@@ -57,22 +60,15 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
               />
             </div>
           </div>
 
           <div>
-            <div className="flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-900">
-                Password
-              </label>
-              <div className="text-sm">
-                <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                  Forgot password?
-                </a>
-              </div>
-            </div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-900">
+              Password
+            </label>
             <div className="mt-2">
               <input
                 type="password"
@@ -82,7 +78,7 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:outline-indigo-600 sm:text-sm"
               />
             </div>
           </div>
@@ -90,7 +86,7 @@ export default function LoginPage() {
           <div>
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500"
             >
               Sign in
             </button>
@@ -99,9 +95,9 @@ export default function LoginPage() {
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Not a member?{" "}
-            <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">
-              Click Here to Register
-            </Link>
+          <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">
+            Click Here to Register
+          </Link>
         </p>
       </div>
     </div>

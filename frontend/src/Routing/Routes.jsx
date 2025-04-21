@@ -14,7 +14,9 @@ import TicketBookingPage from "../Pages/TicketBookingPage/TicketBookingPage";
 import PaymentPage from "../Pages/PaymentPage/PaymentPage";
 import OrderHistoryPage from "../Pages/OrderHistoryPage/OrderHistoryPage";
 import ViewTicketPage from  "../Pages/ViewTicketPage/ViewTicketPage";
-
+import AdHomePage from "../Pages/AdminPages/AdHomePage";
+import CurrentStatusPage from "../Pages/AdminPages/CurrentStatusPage";
+import ManageShowPage from "../Pages/AdminPages/ManageShowPage";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -75,6 +77,18 @@ export const router = createBrowserRouter([
             {
                 path:"/viewTicket/:id",
                 element:<ViewTicketPage/>
+            },
+            {
+                path: "/adminHomePage",
+                element: <AdHomePage />
+            },
+            {
+                path: "/current-status",
+                element: <CurrentStatusPage />
+            },
+            {
+                path: "/manage-shows",
+                element:<ManageShowPage/>
             }
         ]
 

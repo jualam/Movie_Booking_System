@@ -2,6 +2,25 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 
+export const getProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId).select("-password -__v");
+
+    if (!user) {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Update user profile
 export const updateProfile = async (req, res, next) => {
   try {
