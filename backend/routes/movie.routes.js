@@ -1,7 +1,6 @@
 import express from "express";
 import {
   addMovie,
-  updateMovie,
   deleteMovie,
   getCurrentMovies,
   getUpcomingMovies,
@@ -10,19 +9,18 @@ import {
 } from "../controllers/movie.controller.js";
 import { requireAdmin } from "../middleware/admin.middleware.js";
 import { authenticate } from "../middleware/auth.middleware.js";
+import upload from "../middleware/upload.js"; // This is your Cloudinary upload middleware
 
 const router = express.Router();
 
 // Public routes
-router.get("/current", authenticate, getCurrentMovies);
-router.get("/upcoming", authenticate, getUpcomingMovies);
-router.get("/search", authenticate, searchMovies);
-router.get("/:id", authenticate, getMovieDetails);
+router.get("/current", getCurrentMovies);
+router.get("/upcoming", getUpcomingMovies);
+router.get("/search", searchMovies);
+router.get("/:id", getMovieDetails);
 
 // Admin routes
-router.post("/", requireAdmin, addMovie);
-// Add these routes to movie.routes.js
-router.put("/:id", requireAdmin, updateMovie);
-router.delete("/:id", requireAdmin, deleteMovie);
+router.post("/", authenticate, requireAdmin, upload.single("image"), addMovie);
+router.delete("/:id", authenticate, requireAdmin, deleteMovie);
 
 export default router;

@@ -21,7 +21,7 @@ app.use(
 
 // Express middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 // API Routes
 app.use("/api/v1/auth", authRouter);
@@ -29,6 +29,16 @@ app.use("/api/movies", movieRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/users", userRoutes);
+
+//debugging for cloudinary
+// Error-handling middleware
+app.use((err, req, res, next) => {
+  console.error("GLOBAL ERROR:", err);
+  res.status(500).json({
+    message: "Internal Server Error",
+    error: err.message || err.toString(),
+  });
+});
 
 // Root route
 app.get("/", (req, res) => {
@@ -66,8 +76,8 @@ const startServer = async () => {
           password: hashedPassword,
           isAdmin: true,
           termsAccepted: true,
-          address: "Admin Address", // Required by your schema
-          phoneNumber: "0000000000", // Required by your schema
+          address: "Admin Address",
+          phoneNumber: "0000000000",
         });
 
         console.log("Admin user created successfully");

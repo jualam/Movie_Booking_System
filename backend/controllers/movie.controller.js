@@ -1,50 +1,73 @@
 import Movie from "../models/movie.model.js";
 import Ticket from "../models/ticket.model.js";
+import cloudinary from "../config/cloudinary.js";
 
 // Add new movie (Admin only)
-export const addMovie = async (req, res, next) => {
+export const addMovie = async (req, res) => {
   try {
-    const movieData = req.body;
+    const {
+      title,
+      synopsis,
+      runtime,
+      genre,
+      director,
+      cast,
+      status,
+      ticketPrice,
+    } = req.body;
 
-    // Check if movie exists
-    const existingMovie = await Movie.findOne({ title: movieData.title });
-
-    if (existingMovie) {
-      // Update existing movie
-      const updatedMovie = await Movie.findByIdAndUpdate(
-        existingMovie._id,
-        movieData,
-        { new: true, runValidators: true }
-      );
-
-      return res.status(200).json({
-        success: true,
-        message: "Movie updated successfully",
-        data: updatedMovie,
-      });
+    // Validate required fields
+    if (
+      !title ||
+      !synopsis ||
+      !runtime ||
+      !genre ||
+      !director ||
+      !cast ||
+      !status ||
+      !req.file ||
+      !ticketPrice
+    ) {
+      return res.status(400).json({ error: "All fields are required" });
     }
+    //debugging
+    console.log("📦 req.body:", req.body);
+    console.log("🖼️ req.file:", req.file);
 
-    // Create new movie if doesn't exist
-    const newMovie = await Movie.create(movieData);
+    // Create movie with Cloudinary URL
+    const newMovie = await Movie.create({
+      title,
+      synopsis,
+      runtime: parseInt(runtime),
+      genre: genre.split(",").map((g) => g.trim()), // Convert comma-separated string to array
+      director,
+      cast: cast.split(",").map((c) => c.trim()),
+      status,
+      imageUrl: req.file.path, // Cloudinary URL
+      ticketPrice: parseFloat(ticketPrice) || 12.99, // Fixed price
+    });
 
     res.status(201).json({
       success: true,
-      message: "Movie added successfully",
       data: newMovie,
     });
   } catch (error) {
-    next(error);
+    console.error("FULL ERROR STACK:");
+    console.error(error); // raw object
+    console.error(error.message); // readable message
+    console.error(error.stack); // trace
+    res.status(500).json({
+      message: "Failed to add movie",
+      error: error.message || error.toString(),
+    });
   }
 };
-
 // Get currently playing movies (5 movies)
 export const getCurrentMovies = async (req, res, next) => {
   try {
-    const currentMovies = await Movie.find({
-      status: "now_playing",
-      releaseDate: { $lte: new Date() },
-      endDate: { $gte: new Date() },
-    }).limit(5);
+    const currentMovies = await Movie.find({ status: "currently_playing" })
+      .limit(5)
+      .select("title imageUrl runtime genre");
 
     res.status(200).json({
       success: true,
@@ -59,12 +82,10 @@ export const getCurrentMovies = async (req, res, next) => {
 // Get upcoming movies (5 movies)
 export const getUpcomingMovies = async (req, res, next) => {
   try {
-    const upcomingMovies = await Movie.find({
-      status: "upcoming",
-      releaseDate: { $gt: new Date() },
-    })
-      .sort({ releaseDate: 1 })
-      .limit(5);
+    const upcomingMovies = await Movie.find({ status: "upcoming" })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select("title imageUrl runtime genre");
 
     res.status(200).json({
       success: true,
@@ -76,7 +97,7 @@ export const getUpcomingMovies = async (req, res, next) => {
   }
 };
 
-// Search all movies (15 movies)
+// Search movies
 export const searchMovies = async (req, res, next) => {
   try {
     const { query } = req.query;
@@ -93,7 +114,8 @@ export const searchMovies = async (req, res, next) => {
       { score: { $meta: "textScore" } }
     )
       .sort({ score: { $meta: "textScore" } })
-      .limit(15);
+      .limit(3)
+      .select("title synopsis runtime genre");
 
     res.status(200).json({
       success: true,
@@ -126,49 +148,27 @@ export const getMovieDetails = async (req, res, next) => {
   }
 };
 
-// Update existing movie
-export const updateMovie = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const updateData = req.body;
-
-    const updatedMovie = await Movie.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!updatedMovie) {
-      return res.status(404).json({
-        success: false,
-        message: "Movie not found",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Movie updated successfully",
-      data: updatedMovie,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 // Delete a movie
 export const deleteMovie = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const deletedMovie = await Movie.findByIdAndDelete(id);
-
-    if (!deletedMovie) {
+    const movie = await Movie.findById(id);
+    if (!movie) {
       return res.status(404).json({
         success: false,
         message: "Movie not found",
       });
     }
 
-    // Also delete any tickets associated with this movie
+    // Delete image from Cloudinary
+    if (movie.imageUrl) {
+      const publicId = movie.imageUrl.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(`movie-posters/${publicId}`);
+    }
+
+    // Delete movie and associated tickets
+    await Movie.findByIdAndDelete(id);
     await Ticket.deleteMany({ movie: id });
 
     res.status(200).json({

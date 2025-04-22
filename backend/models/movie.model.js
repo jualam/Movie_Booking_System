@@ -8,9 +8,13 @@ const movieSchema = new mongoose.Schema(
       trim: true,
       unique: true,
     },
-    description: {
+    synopsis: {
       type: String,
-      required: [true, "Description is required"],
+      required: [true, "Synopsis is required"],
+    },
+    runtime: {
+      type: Number, // in minutes
+      required: [true, "Runtime is required"],
     },
     genre: {
       type: [String],
@@ -28,17 +32,10 @@ const movieSchema = new mongoose.Schema(
         "Documentary",
       ],
     },
-    duration: {
-      type: Number, // in minutes
-      required: [true, "Duration is required"],
-    },
-    releaseDate: {
-      type: Date,
-      required: [true, "Release date is required"],
-    },
-    endDate: {
-      type: Date,
-      required: [true, "End date is required"],
+    ticketPrice: {
+      type: Number,
+      required: true,
+      default: 12.99,
     },
     director: {
       type: String,
@@ -48,29 +45,15 @@ const movieSchema = new mongoose.Schema(
       type: [String],
       required: [true, "At least one cast member is required"],
     },
-    posterUrl: {
+    imageUrl: {
       type: String,
-      required: [true, "Poster URL is required"],
-    },
-    // trailerUrl: {
-    //   type: String,
-    //   required: [true, "Trailer URL is required"],
-    // },
-    rating: {
-      type: Number,
-      min: 0,
-      max: 10,
-      default: 0,
+      required: [true, "Image URL is required"],
     },
     status: {
       type: String,
-      enum: ["now_playing", "upcoming", "archived"],
-      default: "upcoming",
-    },
-    ticketPrice: {
-      type: Number,
-      required: [true, "Ticket price is required"],
-      min: [0, "Price can't be negative"],
+      enum: ["currently_playing", "upcoming"],
+      default: "currently_playing",
+      required: true,
     },
   },
   { timestamps: true }
