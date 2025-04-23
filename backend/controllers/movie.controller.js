@@ -62,12 +62,15 @@ export const addMovie = async (req, res) => {
     });
   }
 };
+
 // Get currently playing movies (5 movies)
 export const getCurrentMovies = async (req, res, next) => {
   try {
     const currentMovies = await Movie.find({ status: "currently_playing" })
       .limit(5)
-      .select("title imageUrl runtime genre");
+      .select(
+        "title synopsis runtime genre director cast ticketPrice imageUrl"
+      ); // Added all fields
 
     res.status(200).json({
       success: true,
@@ -85,7 +88,9 @@ export const getUpcomingMovies = async (req, res, next) => {
     const upcomingMovies = await Movie.find({ status: "upcoming" })
       .sort({ createdAt: -1 })
       .limit(5)
-      .select("title imageUrl runtime genre");
+      .select(
+        "title synopsis runtime genre director cast ticketPrice imageUrl"
+      ); // Added all fields
 
     res.status(200).json({
       success: true,

@@ -36,22 +36,19 @@ export const bookTickets = async (req, res, next) => {
       );
     };
 
-    // Create tickets (one record per quantity)
-    const tickets = [];
-    for (let i = 0; i < quantity; i++) {
-      const ticket = await Ticket.create({
-        movie: movieId,
-        user: userId,
-        ticketNumber: generateTicketNumber(),
-        theatre,
-        showtime,
-        quantity: 1, // Each ticket represents one seat
-        paymentMethod,
-      });
-      tickets.push(ticket);
-    }
+    // Generate one ticket number
+    const ticketNumber = generateTicketNumber();
 
-    // Prepare response
+    const ticket = await Ticket.create({
+      movie: movieId,
+      user: userId,
+      ticketNumber,
+      theatre,
+      showtime,
+      quantity, // store full quantity here
+      paymentMethod,
+    });
+
     const response = {
       success: true,
       message: `${quantity} ticket(s) booked successfully`,
@@ -60,10 +57,8 @@ export const bookTickets = async (req, res, next) => {
         theatre,
         showtime,
         totalTickets: quantity,
-        tickets: tickets.map((t) => ({
-          ticketNumber: t.ticketNumber,
-          qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${t.ticketNumber}`,
-        })),
+        ticketNumber,
+        qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ticketNumber}`,
       },
     };
 
@@ -91,6 +86,7 @@ export const getBookingHistory = async (req, res, next) => {
         theatre: b.theatre,
         showtime: b.showtime,
         ticketNumber: b.ticketNumber,
+        totalTickets: b.quantity,
         bookingDate: b.createdAt,
         qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${b.ticketNumber}`,
       })),

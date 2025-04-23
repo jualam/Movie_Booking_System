@@ -1,6 +1,7 @@
 import Ticket from "../models/ticket.model.js";
+import Movie from "../models/movie.model.js";
 
-// Get daily ticket sales
+// Get daily ticket sales with current movie titles
 export const getDailyTicketSales = async (req, res, next) => {
   try {
     const today = new Date();
@@ -9,6 +10,7 @@ export const getDailyTicketSales = async (req, res, next) => {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
+    // 1. Get daily ticket sales
     const tickets = await Ticket.aggregate([
       {
         $match: {
@@ -19,7 +21,7 @@ export const getDailyTicketSales = async (req, res, next) => {
         $group: {
           _id: "$movie",
           totalTickets: { $sum: "$quantity" },
-          totalRevenue: { $sum: { $multiply: ["$quantity", 12.99] } }, // Assuming $10 per ticket
+          totalRevenue: { $sum: { $multiply: ["$quantity", 12.99] } },
         },
       },
       {
@@ -42,20 +44,30 @@ export const getDailyTicketSales = async (req, res, next) => {
       },
     ]);
 
-    const totalSales = tickets.reduce(
+    // 2. Get just titles of currently playing movies
+    const currentMovieTitles = await Movie.find({ status: "currently_playing" })
+      .select("title -_id") // Only get title field, exclude _id
+      .lean();
+
+    // Calculate totals
+    const totalRevenue = tickets.reduce(
       (sum, item) => sum + item.totalRevenue,
+      0
+    );
+    const totalTicketsSold = tickets.reduce(
+      (sum, item) => sum + item.totalTickets,
       0
     );
 
     res.status(200).json({
       success: true,
       date: today.toDateString(),
-      totalTicketsSold: tickets.reduce(
-        (sum, item) => sum + item.totalTickets,
-        0
-      ),
-      totalRevenue: totalSales,
-      salesByMovie: tickets,
+      report: {
+        totalTicketsSold,
+        totalRevenue,
+        salesByMovie: tickets,
+      },
+      currentMovies: currentMovieTitles, // Just array of titles
     });
   } catch (error) {
     next(error);
