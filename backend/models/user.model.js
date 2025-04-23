@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-// Creating a schema
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -43,9 +42,11 @@ const userSchema = new mongoose.Schema(
     termsAccepted: {
       type: Boolean,
       required: [true, "You must accept the terms and conditions"],
+      default: false,
     },
     isAdmin: {
       type: Boolean,
+      required: true,
       default: false,
     },
   },

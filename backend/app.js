@@ -8,7 +8,6 @@ import bcrypt from "bcryptjs";
 import bookingRoutes from "./routes/booking.routes.js";
 import reportRoutes from "./routes/report.routes.js";
 import userRoutes from "./routes/user.routes.js";
-
 import cors from "cors";
 
 const app = express();
@@ -30,7 +29,6 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/users", userRoutes);
 
-//debugging for cloudinary
 // Error-handling middleware
 app.use((err, req, res, next) => {
   console.error("GLOBAL ERROR:", err);
@@ -45,48 +43,55 @@ app.get("/", (req, res) => {
   res.send("Welcome to the MBS");
 });
 
-// Database connection and admin creation
+// Enhanced admin creation function
+const createAdminUser = async () => {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (!adminEmail || !adminPassword) {
+    console.warn("ADMIN_EMAIL or ADMIN_PASSWORD not set in .env");
+    return;
+  }
+
+  try {
+    // Check if admin exists and is properly configured
+    let admin = await User.findOne({ email: adminEmail });
+
+    if (!admin) {
+      // Create new admin
+      const hashedPassword = await bcrypt.hash(adminPassword, 12);
+      admin = await User.create({
+        firstName: "Admin",
+        lastName: "User",
+        email: adminEmail,
+        password: hashedPassword,
+        isAdmin: true,
+        termsAccepted: true,
+        address: "Admin Address",
+        phoneNumber: "0000000000",
+      });
+      console.log("Admin user created successfully");
+    } else if (!admin.isAdmin) {
+      // Update existing user to admin
+      admin.isAdmin = true;
+      await admin.save();
+      console.log("Existing user upgraded to admin");
+    } else {
+      console.log("Admin user already exists");
+    }
+  } catch (error) {
+    console.error("Error creating/updating admin user:", error);
+  }
+};
+
+// Database connection and server startup
 const startServer = async () => {
   try {
-    // 1. Connect to database
     await connectToDatabase();
     console.log("Connected to MongoDB");
 
-    // 2. Create admin user if doesn't exist
-    const createAdminUser = async () => {
-      const adminEmail = process.env.ADMIN_EMAIL;
-
-      if (!adminEmail || !process.env.ADMIN_PASSWORD) {
-        console.warn("ADMIN_EMAIL or ADMIN_PASSWORD not set in .env");
-        return;
-      }
-
-      const adminExists = await User.findOne({ email: adminEmail });
-
-      if (!adminExists) {
-        const hashedPassword = await bcrypt.hash(
-          process.env.ADMIN_PASSWORD,
-          12
-        );
-
-        await User.create({
-          firstName: "Admin",
-          lastName: "User",
-          email: adminEmail,
-          password: hashedPassword,
-          isAdmin: true,
-          termsAccepted: true,
-          address: "Admin Address",
-          phoneNumber: "0000000000",
-        });
-
-        console.log("Admin user created successfully");
-      }
-    };
-
     await createAdminUser();
 
-    // 3. Start server
     app.listen(PORT, () => {
       console.log(`API is running on http://localhost:${PORT}`);
     });
@@ -96,7 +101,6 @@ const startServer = async () => {
   }
 };
 
-// Start the application
 startServer();
 
 export default app;

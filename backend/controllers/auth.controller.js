@@ -23,7 +23,6 @@ export const signUp = async (req, res, next) => {
       termsAccepted,
     } = req.body;
 
-    // Validate required fields
     if (
       !firstName ||
       !lastName ||
@@ -38,14 +37,12 @@ export const signUp = async (req, res, next) => {
       throw error;
     }
 
-    // Validate terms acceptance
     if (termsAccepted !== true) {
       const error = new Error("You must accept the terms and conditions");
       error.statusCode = 400;
       throw error;
     }
 
-    // Check for existing user
     const existingUser = await User.findOne({ email }).session(session);
     if (existingUser) {
       const error = new Error("User with this email already exists");
@@ -53,10 +50,8 @@ export const signUp = async (req, res, next) => {
       throw error;
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create new user
     const newUser = await User.create(
       [
         {
@@ -67,12 +62,12 @@ export const signUp = async (req, res, next) => {
           phoneNumber,
           password: hashedPassword,
           termsAccepted,
+          isAdmin: false, // Explicitly set to false for new signups
         },
       ],
       { session }
     );
 
-    // Generate JWT token
     const token = jwt.sign({ userId: newUser[0]._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
@@ -80,7 +75,6 @@ export const signUp = async (req, res, next) => {
     await session.commitTransaction();
     session.endSession();
 
-    // Prepare user data for response (without password)
     const userData = newUser[0].toObject();
     delete userData.password;
 
@@ -103,14 +97,12 @@ export const signIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
       const error = new Error("Email and password are required");
       error.statusCode = 400;
       throw error;
     }
 
-    // Find user with password selected
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
       const error = new Error("Invalid email or password");
@@ -118,7 +110,6 @@ export const signIn = async (req, res, next) => {
       throw error;
     }
 
-    // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       const error = new Error("Invalid email or password");
@@ -126,12 +117,10 @@ export const signIn = async (req, res, next) => {
       throw error;
     }
 
-    // Generate JWT token
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
 
-    // Prepare user data for response (without password)
     const userData = user.toObject();
     delete userData.password;
 
