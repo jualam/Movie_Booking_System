@@ -1,39 +1,76 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const UpcomingMovieDetailsPage = () => {
   const navigate = useNavigate();
-  //for now just using shawshank
-  const movie = {
-    id: 1,
-    title: "A Beautyful Mind",
-    year: 2001,
-    rating: "R",
-    runtime: "2h 15m",
-    genre: "DocuDrama",
-    director: "Ron Howard",
-    cast: "Russell Crowe, Ed Harris, Jennifer Connelly",
-    synopsis: "A mathematical genius, John Nash made an astonishing discovery early in his career and stood on the brink of international acclaim. But the handsome and arrogant Nash soon found himself on a harrowing journey of self-discovery.",
-    imagePath: "/src/assets/movie6.jpg" 
-  };
+  const location = useLocation();
+  const { id } = useParams(); // Get movie ID from URL
+  const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchMovieDetails = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5500/api/movies/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to fetch movie details');
+        }
+
+        if (data.success) {
+          setMovie(data.data);
+        } else {
+          throw new Error('Movie not found');
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovieDetails();
+  }, [id]);
 
   // Handle booking button click
   const handleBookNow = () => {
-    navigate(`/ticketBooking/${movie.id}`);
+    navigate(`/ticketBooking/${id}`);
+  };
+  if (!movie) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex items-center justify-center">
+        <div className="text-xl">Movie not found</div>
+      </div>
+    );
+  }
+
+  // Converting runtime from minutes to hour minutes format
+  const formatRuntime = (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}m`;
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
-      {/* same as current mvies page */}
       <header className="py-6 px-4 md:px-8 border-b border-gray-800">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold">Movie Booking System</h1>
           <nav className="hidden md:flex items-center space-x-6">
-            <Link to="/homePage" className="hover:text-purple-400 transition-colors">Home</Link>
-            <Link to="/browseCurrent" className="hover:text-purple-400 transition-colors">Now Playing</Link>
-            <Link to="/browseUpcoming" className="hover:text-purple-400 transition-colors">Coming Soon</Link>
-            <Link to="/profile" className="hover:text-purple-400 transition-colors">Profile</Link>
-            <Link to="/orderHistory" className="hover:text-purple-400 transition-colors">Order History</Link>
+            <Link to="/homePage" className={`hover:text-purple-400 transition-colors ${location.pathname === '/homePage' ? 'text-purple-400 font-medium' : ''}`}>Home</Link>
+            <Link to="/browseCurrent" className={`hover:text-purple-400 transition-colors ${location.pathname === '/browseCurrent' ? 'text-purple-400 font-medium' : ''}`}>Now Playing</Link>
+            <Link to="/browseUpcoming" className={`hover:text-purple-400 transition-colors ${location.pathname === '/browseUpcoming' ? 'text-purple-400 font-medium' : ''}`}>Coming Soon</Link>
+            <Link to="/profile" className={`hover:text-purple-400 transition-colors ${location.pathname === '/profile' ? 'text-purple-400 font-medium' : ''}`}>Profile</Link>
+            <Link to="/orderHistory" className={`hover:text-purple-400 transition-colors ${location.pathname === '/orderHistory' ? 'text-purple-400 font-medium' : ''}`}>Order History</Link>
           </nav>
           <div className="md:hidden">
             <button className="text-xl">☰</button>
@@ -41,9 +78,7 @@ const UpcomingMovieDetailsPage = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto py-8 px-4 md:px-8">
-        {/* Back Button */}
         <button 
           onClick={() => navigate(-1)}
           className="flex items-center text-purple-400 hover:text-purple-300 mb-6 transition-colors"
@@ -54,30 +89,26 @@ const UpcomingMovieDetailsPage = () => {
           Back to Movies
         </button>
 
-        {/* Movie Details Section */}
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Movie Poster */}
           <div className="w-full lg:w-1/3">
             <div className="rounded-lg overflow-hidden shadow-xl">
               <img 
-                src={movie.imagePath} 
+                src={movie.imageUrl} 
                 alt={movie.title} 
                 className="w-full h-auto object-cover"
               />
             </div>
           </div>
 
-          {/* Movie Info */}
           <div className="w-full lg:w-2/3">
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">{movie.title} <span className="text-gray-400">({movie.year})</span></h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">{movie.title}</h1>
             
             <div className="flex items-center space-x-4 mb-6">
-              <span className="px-2 py-1 bg-gray-700 rounded text-sm">{movie.rating}</span>
-              <span>{movie.runtime}</span>
-              <span>{movie.genre}</span>
+              <span className="px-2 py-1 bg-gray-700 rounded text-sm">R</span>
+              <span>{formatRuntime(movie.runtime)}</span>
+              <span>{movie.genre.join(', ')}</span>
             </div>
 
-            {/* Movie Details */}
             <div className="space-y-6">
               <div>
                 <h2 className="text-xl font-semibold mb-2">Synopsis</h2>
@@ -91,21 +122,23 @@ const UpcomingMovieDetailsPage = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-2">Cast</h3>
-                  <p className="text-gray-300">{movie.cast}</p>
+                  <p className="text-gray-300">{movie.cast.join(', ')}</p>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Ticket Price</h3>
+                  <p className="text-gray-300">${movie.ticketPrice.toFixed(2)}</p>
                 </div>
               </div>
             </div>
 
-            {/* Reviews Section */}
             <div className="mt-12">
               <h2 className="text-2xl font-bold mb-6">Reviews</h2>
               
-              {/* Sample Reviews */}
               <div className="space-y-4">
                 <div className="bg-gray-800 p-4 rounded-lg">
                   <div className="flex items-center mb-2">
                     <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center mr-3">
-                      <span className="text-sm font-medium">JD</span>
+                      <span className="text-sm font-medium">JA</span>
                     </div>
                     <h4 className="font-medium">Juhair Alam</h4>
                   </div>
@@ -122,11 +155,10 @@ const UpcomingMovieDetailsPage = () => {
                     ))}
                   </div>
                   <p className="text-gray-300">
-                    One of the greatest films ever made. The story of hope and friendship is timeless. I would remommend this film to anyone.
+                  One of the greatest films ever made. The stroy iss really good and would recommend to anyone.
                   </p>
                 </div>
 
-                {/* Add Review Form */}
                 <div className="mt-8">
                   <h3 className="text-xl font-semibold mb-4">Write a Review</h3>
                   <textarea 

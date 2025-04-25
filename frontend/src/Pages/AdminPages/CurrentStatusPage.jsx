@@ -1,9 +1,60 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 export default function CurrentStatusPage() {
-  // Static data - will be replaced with backend API calls later
-  const totalTicketsSold = 589; // Example total
-  const totalRevenue = (totalTicketsSold * 12.99).toFixed(2);
-  const currentMovies = ["Dune: Part Two", "The Batman", "Oppenheimer"]; // Just titles for reference
+  const [reportData, setReportData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token"); //berer token
+
+    //abrar please check bearer token issue
+    if (!token) {
+      console.error("No token found in localStorage.");
+      setLoading(false);
+      return;
+    }
+
+    fetch("http://localhost:5500/api/reports/sales/daily", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setReportData(data);
+        } else {
+          console.error("API returned success: false", data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-700">
+        Loading report...
+      </div>
+    );
+  }
+
+  if (!reportData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 text-red-600">
+        Failed to load report.
+      </div>
+    );
+  }
+
+  const { report, currentMovies, date } = reportData;
+  const { totalTicketsSold, totalRevenue } = report;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -29,17 +80,17 @@ export default function CurrentStatusPage() {
             <div className="px-4 py-5 sm:p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0 bg-indigo-500 rounded-md p-3">
-                  <svg 
-                    className="h-6 w-6 text-white" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
+                  <svg
+                    className="h-6 w-6 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" 
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                     />
                   </svg>
                 </div>
@@ -58,24 +109,26 @@ export default function CurrentStatusPage() {
             <div className="px-4 py-5 sm:p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0 bg-green-500 rounded-md p-3">
-                  <svg 
-                    className="h-6 w-6 text-white" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
+                  <svg
+                    className="h-6 w-6 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dt className="text-sm font-medium text-gray-500 truncate">Total Revenue</dt>
                   <dd className="flex items-baseline">
-                    <div className="text-2xl font-semibold text-gray-900">${totalRevenue}</div>
+                    <div className="text-2xl font-semibold text-gray-900">
+                      ${parseFloat(totalRevenue).toFixed(2)}
+                    </div>
                   </dd>
                 </div>
               </div>
@@ -93,7 +146,7 @@ export default function CurrentStatusPage() {
             <ul className="space-y-3">
               {currentMovies.map((movie, index) => (
                 <li key={index} className="text-sm text-gray-700">
-                  {movie}
+                  {movie.title}
                 </li>
               ))}
             </ul>
@@ -102,7 +155,7 @@ export default function CurrentStatusPage() {
 
         {/* Footer Note */}
         <div className="mt-4 text-center text-sm text-gray-500">
-          <p>Ticket price: $12.99 each • Last updated: {new Date().toLocaleString()}</p>
+          <p>Ticket price: $12.99 each • Last updated: {new Date(date).toLocaleString()}</p>
         </div>
       </main>
     </div>

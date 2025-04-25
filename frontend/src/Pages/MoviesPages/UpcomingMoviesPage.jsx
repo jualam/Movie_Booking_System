@@ -1,35 +1,78 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const UpcomingMoviesPage = () => {
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const movies = [
-    { id: 1, imagePath: '/src/assets/movie6.jpg', title: '' },
-    { id: 2, imagePath: '/src/assets/movie7.jpg', title: '' },
-    { id: 3, imagePath: '/src/assets/movie8.jpg', title: '' },
-    { id: 4, imagePath: '/src/assets/movie9.jpg', title: '' },
-    { id: 5, imagePath: '/src/assets/movie10.jpg', title: '' },
-  ];
+  const location = useLocation();
 
-  // Function to handle booking button click without mistakenly clicking movie card
-  const handleBookNowClick = (e, movieId) => {
-    e.preventDefault(); // Prevent navigating to movie details
-    e.stopPropagation(); // Stop event bubbling
-    navigate(`/ticketBooking/${movieId}`);
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:5500/api/movies/upcoming', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to fetch upcoming movies');
+        }
+
+        if (data.success) {
+          setMovies(data.data);
+        } else {
+          throw new Error('No upcoming movies found');
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovies();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex items-center justify-center">
+        <div className="text-xl">Loading upcoming movies...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex items-center justify-center">
+        <div className="text-red-500 text-xl">{error}</div>
+      </div>
+    );
+  }
+
+  // minutes to hour minutes
+  const formatRuntime = (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}m`;
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
-      {/* Header */}
       <header className="py-6 px-4 md:px-8 border-b border-gray-800">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold">Movie Booking System</h1>
           <nav className="hidden md:flex items-center space-x-6">
-            <Link to="/homePage" className="hover:text-purple-400 transition-colors">Home</Link>
-            <Link to="/browseCurrent" className="text-purple-400 font-medium">Now Playing</Link>
-            <Link to="/browseUpcoming" className="hover:text-purple-400 transition-colors">Coming Soon</Link>
-            <Link to="/profile" className="hover:text-purple-400 transition-colors">Profile</Link>
-            <Link to="/orderHistory" className="hover:text-purple-400 transition-colors">Order History</Link>
+            <Link to="/homePage" className={`hover:text-purple-400 transition-colors ${location.pathname === '/homePage' ? 'text-purple-400 font-medium' : ''}`}>Home</Link>
+            <Link to="/browseCurrent" className={`hover:text-purple-400 transition-colors ${location.pathname === '/browseCurrent' ? 'text-purple-400 font-medium' : ''}`}>Now Playing</Link>
+            <Link to="/browseUpcoming" className={`hover:text-purple-400 transition-colors ${location.pathname === '/browseUpcoming' ? 'text-purple-400 font-medium' : ''}`}>Coming Soon</Link>
+            <Link to="/profile" className={`hover:text-purple-400 transition-colors ${location.pathname === '/profile' ? 'text-purple-400 font-medium' : ''}`}>Profile</Link>
+            <Link to="/orderHistory" className={`hover:text-purple-400 transition-colors ${location.pathname === '/orderHistory' ? 'text-purple-400 font-medium' : ''}`}>Order History</Link>
           </nav>
           <div className="md:hidden">
             <button className="text-xl">☰</button>
@@ -37,7 +80,6 @@ const UpcomingMoviesPage = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto py-8 px-4 md:px-8">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-bold">Upcoming Movies</h2>
@@ -55,35 +97,27 @@ const UpcomingMoviesPage = () => {
           </div>
         </div>
 
-        {/* Movies Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {movies.map((movie) => (
             <div 
-              key={movie.id}
+              key={movie._id}
               className="group bg-gray-800 rounded-lg overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-purple-900/20"
             >
-              {/* click to go to movie details,using static id fr now*/}
-              <Link to={`/upcomingMovieDetails/${movie.id}`}>
+              <Link to={`/upcomingMovieDetails/${movie._id}`}>
                 <div className="relative">
                   <img 
-                    src={movie.imagePath} 
-                    alt="Movie poster" 
+                    src={movie.imageUrl} 
+                    alt={movie.title} 
                     className="w-full h-80 object-cover"
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="text-lg font-medium text-center h-8">
-                    {movie.title || "Movie Title"}
+                  <h3 className="text-lg font-medium text-center h-8 truncate" title={movie.title}>
+                    {movie.title}
                   </h3>
                   <div className="flex justify-center items-center mt-2">
-                    <div className="flex items-center">
-                      <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                      </svg>
-                      <span className="text-sm text-gray-400 ml-1">PG-13</span>
-                    </div>
-                    <span className="mx-2 text-gray-600">•</span>
-                    <span className="text-sm text-gray-400">2h 30m</span>
+                    {/* change made: faiaz->convertig minutes to hour and minutes  */}
+                    <span className="text-sm text-gray-400">{Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m</span>
                   </div>
                 </div>
               </Link>
