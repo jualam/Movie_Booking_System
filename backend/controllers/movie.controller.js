@@ -67,7 +67,7 @@ export const addMovie = async (req, res) => {
 export const getCurrentMovies = async (req, res, next) => {
   try {
     const currentMovies = await Movie.find({ status: "currently_playing" })
-      .limit(5)
+      .limit(10)
       .select(
         "title synopsis runtime genre director cast ticketPrice imageUrl"
       ); // Added all fields
@@ -87,7 +87,7 @@ export const getUpcomingMovies = async (req, res, next) => {
   try {
     const upcomingMovies = await Movie.find({ status: "upcoming" })
       .sort({ createdAt: -1 })
-      .limit(5)
+      .limit(10)
       .select(
         "title synopsis runtime genre director cast ticketPrice imageUrl"
       ); // Added all fields

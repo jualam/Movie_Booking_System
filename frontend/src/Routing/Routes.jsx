@@ -63,7 +63,7 @@ export const router = createBrowserRouter([
                 element:<ProfilePage/>
             },
             {
-                path:"/ticketBooking/:id",
+                path:"/ticketBooking/:movieId",
                 element:<TicketBookingPage/>
             },
             {

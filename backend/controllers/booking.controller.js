@@ -53,6 +53,7 @@ export const bookTickets = async (req, res, next) => {
       success: true,
       message: `${quantity} ticket(s) booked successfully`,
       bookingDetails: {
+        id: ticket.id,
         movie: movie.title,
         theatre,
         showtime,
@@ -90,6 +91,49 @@ export const getBookingHistory = async (req, res, next) => {
         bookingDate: b.createdAt,
         qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${b.ticketNumber}`,
       })),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+export const getTicketInfoById = async (req, res, next) => {
+  try {
+    const { id } = req.params; // Get the ticket ID from the URL parameters
+
+    // Find the ticket by its ID
+    const ticket = await Ticket.findById(id)
+      .populate("movie", "title posterUrl") // Populating movie data
+      .populate("user", "name email"); // Optionally populate user info
+
+    // Check if ticket exists
+    if (!ticket) {
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+    }
+
+    // Respond with ticket info
+    res.status(200).json({
+      success: true,
+      ticket: {
+        id: ticket._id,
+        movie: ticket.movie.title,
+        poster: ticket.movie.posterUrl,
+        theatre: ticket.theatre,
+        showtime: ticket.showtime,
+        ticketNumber: ticket.ticketNumber,
+        totalTickets: ticket.quantity,
+        bookingDate: ticket.createdAt,
+        user: {
+          name: ticket.user.name,
+          email: ticket.user.email,
+        },
+        qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ticket.ticketNumber}`,
+      },
     });
   } catch (error) {
     next(error);
