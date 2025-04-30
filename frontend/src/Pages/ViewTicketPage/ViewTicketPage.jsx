@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 
 const ViewTicketPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate()
   const [ticketData, setTicketData] = useState(null);
 
   useEffect(() => {
@@ -37,6 +38,9 @@ const ViewTicketPage = () => {
       <header className="bg-gray-900 text-white py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-xl font-bold">Movie Booking System</h1>
+          <button onClick={() =>navigate('/homePage')} className="bg-white text-gray-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">
+            Return to Home
+          </button>
         </div>
       </header>
       <main className="container mx-auto py-8 px-4">
