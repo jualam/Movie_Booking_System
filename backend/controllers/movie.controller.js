@@ -63,7 +63,7 @@ export const addMovie = async (req, res) => {
   }
 };
 
-// Get currently playing movies (5 movies)
+// Get currently playing movies
 export const getCurrentMovies = async (req, res, next) => {
   try {
     const currentMovies = await Movie.find({ status: "currently_playing" })
@@ -82,7 +82,7 @@ export const getCurrentMovies = async (req, res, next) => {
   }
 };
 
-// Get upcoming movies (5 movies)
+// Get upcoming movies
 export const getUpcomingMovies = async (req, res, next) => {
   try {
     const upcomingMovies = await Movie.find({ status: "upcoming" })
@@ -90,7 +90,7 @@ export const getUpcomingMovies = async (req, res, next) => {
       .limit(10)
       .select(
         "title synopsis runtime genre director cast ticketPrice imageUrl"
-      ); // Added all fields
+      );
 
     res.status(200).json({
       success: true,
@@ -120,7 +120,7 @@ export const searchMovies = async (req, res, next) => {
     )
       .sort({ score: { $meta: "textScore" } })
       .limit(3)
-      .select("title synopsis runtime genre");
+      .select("title synopsis runtime genre imageUrl status");
 
     res.status(200).json({
       success: true,

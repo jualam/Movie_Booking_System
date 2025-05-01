@@ -10,6 +10,6 @@ const authRouter = Router();
 
 authRouter.post("/signup", signUp);
 authRouter.post("/signin", signIn);
-authRouter.get("/me", authenticate, getCurrentUser); // Add this line
+authRouter.get("/me", authenticate, getCurrentUser);
 
 export default authRouter;
