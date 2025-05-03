@@ -2,23 +2,14 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function ManageShowPage() {
-  // State for tab selection
   const [activeTab, setActiveTab] = useState("current");
-
-  // State for form visibility
   const [showAddForm, setShowAddForm] = useState(false);
-
-  // State for movies data
   const [movies, setMovies] = useState({
     current: [],
     upcoming: [],
   });
-
-  // State for loading and error
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // State for new movie form
   const [newMovie, setNewMovie] = useState({
     title: "",
     synopsis: "",
@@ -30,8 +21,6 @@ export default function ManageShowPage() {
     status: "currently_playing",
     image: null,
   });
-
-  // Fetch movies data
   useEffect(() => {
     fetchMovies();
   }, []);
@@ -61,20 +50,16 @@ export default function ManageShowPage() {
       setLoading(false);
     }
   };
-
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewMovie((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle image upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setNewMovie((prev) => ({ ...prev, image: file }));
   };
 
-  // Handle form submission
   const handleAddMovie = async (e) => {
     e.preventDefault();
 
@@ -115,9 +100,7 @@ export default function ManageShowPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Refresh the movies list
         await fetchMovies();
-        // Reset form and close it
         setNewMovie({
           title: "",
           synopsis: "",
@@ -141,10 +124,10 @@ export default function ManageShowPage() {
   // Delete movie
   const handleDeleteMovie = async (id, status) => {
     try {
-      // Get token from localStorage (or your storage method)
+      // token issue fixed,juhair
       const token = localStorage.getItem('token');
   
-      // Call the DELETE API
+      //callin the delete api
       const response = await fetch(`http://localhost:5500/api/movies/${id}`, {
         method: 'DELETE',
         headers: {
@@ -157,7 +140,6 @@ export default function ManageShowPage() {
         throw new Error('Failed to delete the movie');
       }
   
-      // If deletion successful, update the local state
       setMovies((prev) => ({
         ...prev,
         [status]: prev[status].filter((movie) => movie.id !== id),
@@ -170,8 +152,6 @@ export default function ManageShowPage() {
     }
   };
   
-  
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -214,8 +194,6 @@ export default function ManageShowPage() {
             </button>
           </nav>
         </div>
-
-        {/* Loading and Error States */}
         {loading && (
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
@@ -246,7 +224,7 @@ export default function ManageShowPage() {
           </div>
         )}
 
-        {/* Add Movie Button */}
+        {/* add movie button */}
         <div className="mb-6">
           <button
             onClick={() => setShowAddForm(true)}
@@ -255,8 +233,7 @@ export default function ManageShowPage() {
             Add New Movie
           </button>
         </div>
-
-        {/* Add Movie Form */}
+        {/* add movie form */}
         {showAddForm && (
           <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-8 p-6 border border-gray-200">
             <h3 className="text-lg font-medium text-gray-900 mb-4">

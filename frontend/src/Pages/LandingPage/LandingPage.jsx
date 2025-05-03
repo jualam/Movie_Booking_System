@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 const LandingPage = () => {
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center p-6 relative overflow-hidden">
-      {/* 3D part */}
+      {/* 3D background,tailwind website */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-600 rounded-full mix-blend-screen opacity-20 filter blur-3xl"></div>
         <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-blue-600 rounded-full mix-blend-screen opacity-20 filter blur-3xl"></div>
@@ -12,13 +12,9 @@ const LandingPage = () => {
       {/* Main Part*/}
       <div className="relative z-10 text-center max-w-2xl mx-auto">
         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">
-            Movie Booking System
-          </span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">Movie Booking System</span>
         </h1>
-        <p className="text-xl text-gray-300 mb-12 font-light tracking-wider">
-          Your gateway to cinematic experiences
-        </p>
+        <p className="text-xl text-gray-300 mb-12 font-light tracking-wider">Your gateway to cinematic experiences</p>
         <div className="flex flex-col sm:flex-row gap-6 justify-center">
           <Link 
             to="/login" 

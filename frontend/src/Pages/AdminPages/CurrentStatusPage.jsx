@@ -14,7 +14,6 @@ export default function CurrentStatusPage() {
       setLoading(false);
       return;
     }
-
     fetch("http://localhost:5500/api/reports/sales/daily", {
       method: "GET",
       headers: {

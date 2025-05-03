@@ -25,7 +25,6 @@ const CurrentMovieDetailsPage = () => {
         if (!response.ok) {
           throw new Error(data.message || 'Failed to fetch movie details');
         }
-
         if (data.success) {
           setMovie(data.data);
         } else {

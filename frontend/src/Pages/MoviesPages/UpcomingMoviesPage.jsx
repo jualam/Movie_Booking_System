@@ -46,7 +46,6 @@ const UpcomingMoviesPage = () => {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex items-center justify-center">
@@ -54,7 +53,6 @@ const UpcomingMoviesPage = () => {
       </div>
     );
   }
-
   // minutes to hour minutes
   const formatRuntime = (minutes) => {
     const hours = Math.floor(minutes / 60);

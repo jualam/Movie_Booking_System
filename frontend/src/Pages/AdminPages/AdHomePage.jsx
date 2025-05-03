@@ -2,10 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function AdminHomePage() {
   const handleLogout = () => {
-    // Clear admin authentication (you might have more items to clear)
     localStorage.removeItem('isAdmin');
-    // In a real app, you might want to redirect to landing page after logout
-    // This will be handled by your routing/authentication system
   };
 
   return (

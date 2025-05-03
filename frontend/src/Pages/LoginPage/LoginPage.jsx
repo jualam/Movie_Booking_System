@@ -36,7 +36,6 @@ export default function LoginPage() {
       alert("Something went wrong. Please try again.");
     }
   };
-
   return (
     <div className="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -44,7 +43,6 @@ export default function LoginPage() {
           Sign in to your account
         </h2>
       </div>
-
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
@@ -87,17 +85,13 @@ export default function LoginPage() {
             <button
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500"
-            >
-              Sign in
-            </button>
+            >Sign in</button>
           </div>
         </form>
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Not a member?{" "}
-          <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">
-            Click Here to Register
-          </Link>
+          <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">Click Here to Register</Link>
         </p>
       </div>
     </div>

@@ -102,13 +102,12 @@ const UpcomingMovieDetailsPage = () => {
 
           <div className="w-full lg:w-2/3">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">{movie.title}</h1>
-            
             <div className="flex items-center space-x-4 mb-6">
               <span className="px-2 py-1 bg-gray-700 rounded text-sm">R</span>
               <span>{formatRuntime(movie.runtime)}</span>
               <span>{movie.genre.join(', ')}</span>
             </div>
-
+            
             <div className="space-y-6">
               <div>
                 <h2 className="text-xl font-semibold mb-2">Synopsis</h2>

@@ -6,15 +6,11 @@ function HomePage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-900 text-white">
-      {/* Top bar with Sign Out */}
       <div className="flex justify-between items-center px-8 py-4">
-        <div></div> {/* Empty div to balance spacing */}
+        <div></div> 
         <button
           onClick={() => navigate('/')}
-          className="bg-blue-500 hover:bg-red-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300"
-        >
-          Sign Out
-        </button>
+          className="bg-blue-500 hover:bg-red-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300">Sign Out</button>
       </div>
 
       {/* Main Content */}
@@ -56,7 +52,7 @@ function HomePage() {
 
 export default HomePage;
 
-// Card component
+// card 
 function Card({ icon, title, onClick }) {
   return (
     <div

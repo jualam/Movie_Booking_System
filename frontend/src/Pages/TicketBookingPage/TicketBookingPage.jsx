@@ -34,8 +34,6 @@ const TicketBookingPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Debug logs
     console.log("Form Data:", formData);
     console.log("Movie ID:", movieId);
 
