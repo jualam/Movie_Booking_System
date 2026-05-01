@@ -100,7 +100,7 @@ const CurrentMoviesPage = () => {
                     {movie.title}
                   </h3>
                   <div className="flex justify-center items-center mt-2">
-                    {/* change made: faiaz->convertig minutes to hour and minutes  */}
+                    {/* change made: juhair->convertig minutes to hour and minutes  */}
                     <span className="text-sm text-gray-400">{Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m</span>
                   </div>
                 </div>
